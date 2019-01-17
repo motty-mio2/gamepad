@@ -28,7 +28,6 @@ void setup() {
   pinMode(27, INPUT_PULLUP); //左裏クリック
   pinMode(23, INPUT_PULLUP); //左クリック
   pinMode(4, INPUT_PULLUP); //右クリック
-
 }
 
 void loop() {
