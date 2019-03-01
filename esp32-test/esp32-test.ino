@@ -1,6 +1,6 @@
 #include <mio2_RoEn.h>
 #include <Wire.h>
-
+,
 RoEn rswitch;
 int dataRE;
 int pdataRE;
@@ -37,6 +37,7 @@ void loop() {
   }
   pdataRE = dataRE;
 
+/*
   Xst = analogRead(2);
   Yst = analogRead(35);
   Tst = analogRead(34);
@@ -84,6 +85,6 @@ void loop() {
   }
 
   Serial.println("");
-
+*/
   delay(500);
 }
