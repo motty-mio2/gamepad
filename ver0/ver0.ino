@@ -15,14 +15,10 @@ const int re1 = 13;
 const int re2 = 14;
 const int rbs = 15;
 
-//const int display = ;
-//const int nax = ;
-
 const int regdev[3] = {150,456,1000};
 
 void setup(){
   Serial.begin(9600);
-
   //LeftSetting
   pinMode(tjoy, INPUT_PULLUP);
   pinMode(xjoy, INPUT); //X
@@ -64,56 +60,10 @@ void loop() {
   datas[4] = rswitch.EGet();
   datas[5] = analogRead(rbs);
 
-  if (datas[0] == 2) {
-    Serial.print("◯");
-  } else {
-    Serial.print("×");
-  }
-  Serial.print(",");
-
-  if (datas[1] >= 3000) {
-    Serial.print("→");
-  } else if (datas[1] <= 1000) {
-    Serial.print("←");
-  } else {
-    Serial.print("n");
-  }
-  Serial.print(",");
-
-  if (datas[2] >= 3000) {
-    Serial.print("↑");
-  } else if (datas[2] <= 1000) {
-    Serial.print("↓");
-  } else {
-    Serial.print("n");
-  }
-  Serial.print(",");
-
-  if (datas[3] == 1) {
-    Serial.print("◯");
-  } else {
-    Serial.print("×");
-  }
-  Serial.print(",");
-
-  if (priRE != datas[4]) {
-    Serial.print(datas[4]);
-  }
-  priRE = datas[4];
-  Serial.print(",");
-
-  //Serial.print(datas[4]);
-
-  if (datas[5] < regdev[1]) {
-    Serial.print("1");
-  } else if (regdev[1] < datas[5] && datas[5] < regdev[2]) {
-    Serial.print("2");
-  } else if (regdev[2] < datas[5] && datas[5] < regdev[3]) {
-    Serial.print("3");
-  } else {
-    Serial.print("0");
+  for (int i = 0; i < 6; i++) {
+    Serial.print(datas[i]);
+    Serial.print("\t");
   }
   Serial.println();
-
   delay(500);
 }
