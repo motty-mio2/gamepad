@@ -107,20 +107,20 @@ void loop() {
       
         if (datas[5] < regdev[0]) {
             //Serial.print("1");
-            L1 += "  ";
-            L2 += "O ";
+            L1 += " X";
+            L2 += "OX";
         } else if (regdev[0] < datas[5] && datas[5] < regdev[1]) {
             //Serial.print("2");
-            L1 += "  ";
-            L2 += " O";
+            L1 += " X";
+            L2 += "XO";
         } else if (regdev[1] < datas[5] && datas[5] < regdev[2]) {
             //Serial.print("3");]
             L1 += " O";
-            L2 += "  ";
+            L2 += "XX";
         } else {
             //Serial.print("0");
-            L1 += "  ";
-            L2 += "  ";
+            L1 += " X";
+            L2 += "XX";
         }
 //        Serial.println();
         
