@@ -4,7 +4,7 @@
 
 #define DATASETS 6
 int datas[DATASETS] = {0}; //lbt,xjoy,yjoy,joyt,re,rbs
-int delta = 1;
+
 unsigned long circ;
 
 RoEn rswitch;
@@ -26,8 +26,6 @@ const int rbs = 0;
 const int joydev[2] = {1000,3000}; //
 const int regdev[3] = {900,1800,2500}; //200-1500-2000-3000
 
-char L1, L2;
-
 void setup(){
     circ = millis();
     Serial.begin(9600);
@@ -39,7 +37,7 @@ void setup(){
     pinMode(lbt, INPUT_PULLUP);
 
   //RightSetting
-    rswitch.ESet(re1, re2);
+    rswitch.ESet(re2, re1);
     pinMode(rbs, INPUT);
     pinMode(2, OUTPUT);
 
@@ -58,76 +56,78 @@ void loop() {
     datas[4] = rswitch.EGet();
     datas[5] = analogRead(rbs);
 
+    String L1, L2;
 //    if (millis() > circ + 490) {
 //        circ = millis();
         if (datas[3] == 0) {
-            L1 = "O"
+            L1 = "O";
         } else {
-            L1 = "X"
-        }
-        
-        if (datas[0] == 0) {
-            L2 = "O"
-            delta = 20;
-        } else {
-            L2 = "X"
-            delta = 1;
-        }
-        
-        L1 += " ";
-        L2 += " ";
-        
-        if (datas[1] * delta >= joydev[1]) {
-            L1 = "W ";
-        } else if (datas[1] * delta <= joydev[0]) {
-            L1 = " S";
-        } else {
-            L1 = "  ";
-        }
-        
-        if (datas[2] * delta >= joydev[1]) {
-            L2 = "A ";
-        } else if (datas[2] * delta <= joydev[0]) {
-            L2 = " D";
-        } else {
-            L2 = "  "
+            L1 = "X";
         }
 
-        L1 += " ";
-        L2 += " ";
-        L1 += " ";
-        L2 += " ";
-        
-        L1 += datas[4];
+        if (datas[0] == 0) {
+            L2 = "O";
+            if (datas[2] >= 4000) {
+                L2.concat("A   ");
+        } else if (datas[2] <= 3800) {
+            L2.concat(" D  ");
+        } else {
+            L2.concat("    ");
+        }
+        } else {
+            L2 = "X";
+
+        if (datas[2] >= joydev[1]) {
+            L2.concat("A   ");
+        } else if (datas[2] <= joydev[0]) {
+            L2.concat(" D  ");
+        } else {
+            L2.concat("    ");
+        }
+        }
+
+        L1.concat(" ");
+        L2.concat(" ");
+
+        if (datas[1] >= joydev[1]) {
+            L1.concat("W   ");
+        } else if (datas[1] <= joydev[0]) {
+            L1.concat(" S  ");
+        } else {
+            L1.concat("    ");
+        }
+
+
+        L1.concat(datas[4]);
         /*if (pdataRE != datas[4]) {
             Serial.print(datas[4]);
         //}
         //pdataRE = datas[4];
         */
-      
+
         if (datas[5] < regdev[0]) {
             //Serial.print("1");
-            L1 += " X";
-            L2 += "OX";
+            L1.concat("X");
+            L2.concat("OX");
         } else if (regdev[0] < datas[5] && datas[5] < regdev[1]) {
             //Serial.print("2");
-            L1 += " X";
-            L2 += "XO";
+            L1.concat("X");
+            L2.concat("XO");
         } else if (regdev[1] < datas[5] && datas[5] < regdev[2]) {
             //Serial.print("3");]
-            L1 += " O";
-            L2 += "XX";
+            L1.concat("O");
+            L2.concat("XX");
         } else {
             //Serial.print("0");
-            L1 += " X";
-            L2 += "XX";
+            L1.concat("X");
+            L2.concat("XX");
         }
 //        Serial.println();
-        
+
         // LCD表示(1行目)
         lcd.setCursor(0, 0);
         lcd.print(L1);
-    
+
         // LCD表示(2行目)
         lcd.setCursor(0, 1);
         lcd.print(L2);
