@@ -132,4 +132,7 @@ void loop() {
         lcd.setCursor(0, 1);
         lcd.print(L2);
     //}
+    if (Serial.available() > 0) {
+        Serial.write();
+    }
 }

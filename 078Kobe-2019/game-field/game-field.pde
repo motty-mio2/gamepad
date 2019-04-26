@@ -2,24 +2,26 @@ import processing.serial.*;
 
 Serial myPort;
 
-int read_hor = 0;
-int touch;
-int xpon;
-int ypon;
+string data; //受信データ
 
-int flamer = 300;
+int flamer = 300; //的の表示フレーム数
 
-float x;
-float y;
+float x; //的の左上のx座標
+float y; //的の左上のy座標
+
+int delta = 5; //カーソルの移動量
 
 int pt = 0; //得点
-int click = 0;
 int cnt; //得点表示の応答速度を早くする為のカウンタ
 
+int timer = 0; //制限時間計測用変数
+
+//カーソルの色設定
 int rco = 255;
 int gco = 0;
 int bco = 0;
 
+//カーソルの初期座標
 float circle_X = 320;
 float circle_Y = 320;
 
@@ -33,26 +35,68 @@ void setup() {
 }
 
 void draw() {
+  //プログラムの状態指定
+  if(timer > 3600);
+    background(96);
+    text("finish!!",width/2, height/2);
+    text("your score is " + pt,width/2, height/2+30);
+    text("if you wanna play again, click L1 button",width/2, height/2+60);
+  else {
+    timer += 1;
+  }
+ 
+  
+  //背景設定
   background(255);
   strokeWeight(1);
   stroke(200);
   line(0, height/2, width, height/2);
   line(width/2, 0, width/2, height);
 
-  circle_X = map(xpon,0,255,0,width);
-  circle_Y = map(ypon,0,255,height,0);// + random(-5,5);
 
-  if (touch == 1) {
+  //カーソル移動&カーソル設定
+  if (data[5] == "2"){
+    delta = 2;
+  } else {
+    delta = 5;
+  }
+
+  if (data[2] == "1"){
+    circle_X += delta;
+  } else if (data[2] == "2"){
+    circle_X -= delta;
+  }
+  
+  if (data[3] == "1"){
+    circle_Y += delta;
+  } else if (data[3] == "2"){
+    circle_Y -= delta;
+  }
+
+  noFill();
+  strokeWeight(5);
+  stroke(rco, gco, bco);
+  ellipse(circle_X, circle_Y, 5*(data[6]+1), 5*(data[6]+1));
+  
+  if(data[7] == "3"){
     rco = int(random(0, 256));
     gco = int(random(0, 256));
     bco = int(random(0, 256));
-    if ((x <= circle_X && circle_X <= x + 50) && (y <= circle_Y && circle_Y <= y + 50) && (click == 0)) { //当たり判定
-      pt++; //当たったので得点増加
+  }
+
+
+  //クリック判定
+  if (data[7] == "1") {
+    if ((y-5*(data[6]+1) <= circle_Y and circle_Y <= y+50+5*(data[6]+1))
+     && (x-5*(data[6]+1) <= circle_X and circle_X <= x+50+5*(data[6]+1)){
+      pt+= 10-data[6]; //当たったので得点増加
       click = 1;
       cnt = flamer - 1;
     }
   }
 
+
+  //的の描画
   if (++cnt >= flamer) { //180回に一回四角の場所を変える
     background(204);
     x=random(0, height - 50);
@@ -61,23 +105,18 @@ void draw() {
     cnt = 0; //更新したのでカウンタクリア
   }
 
+
+  //文字表示
   background(204);
   fill(255, 255, 255);
   rect(x, y, 50, 50);
   fill(0, 0, 0);
   text(pt+" Point", 520, 620);
-
-  noFill();
-  strokeWeight(5);
-  stroke(rco, gco, bco);
-  ellipse(circle_X, circle_Y, 20, 20);
 }
 
 void serialEvent(Serial myPort) {
-  if (myPort.available()>2) {
-    xpon = myPort.read();
-    ypon = myPort.read();
-    touch = myPort.read();
-    myPort.write(65);
+  if (myPort.available()>1) {
+    data = myPort.read();
+    Serial.write("0");
   }
 }
