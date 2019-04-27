@@ -2,7 +2,7 @@ import processing.serial.*;
 
 Serial myPort;
 
-string data; //受信データ
+int[] data = {0, 0, 0, 0, 0, 0}; //受信データ
 
 int flamer = 300; //的の表示フレーム数
 
@@ -37,19 +37,18 @@ void setup() {
 
 void draw() {
   //プログラムの状態指定
-  if(timer > 3600);
-    background(96);
-    text("finish!!",width/2, height/2);
-    text("your score is " + pt,width/2, height/2+30);
-    text("if you wanna play again, click L1 button",width/2, height/2+60);
-    if(data[0]=="0"){
-      timer = 0
-    }
-  else {
+  if (timer > 3600);
+  background(96);
+  text("finish!!", width/2, height/2);
+  text("your score is " + pt, width/2, height/2+30);
+  text("if you wanna play again, click L1 button", width/2, height/2+60);
+  if (data[0] == 1) {
+    timer = 0;
+  } else {
     timer += 1;
   }
- 
-  
+
+
   //背景設定
   background(255);
   strokeWeight(1);
@@ -59,31 +58,31 @@ void draw() {
 
 
   //カーソル移動&カーソル設定
-  if (data[5] == "2"){
+  if (data[5] == 2) {
     delta = 2;
   } else {
     delta = 5;
   }
 
-  if (data[1] == "1"){
+  if (data[1] == 2 && circle_X < width) {
     circle_X += delta;
-  } else if (data[1] == "2"){
+  } else if (0 < circle_X && data[1] == 1) {
     circle_X -= delta;
   }
-  
-  if (data[2] == "2"){
+
+  if (data[2] == 1 && circle_Y < width) {
     circle_Y += delta;
-  } else if (data[2] == "1"){
+  } else if (0 < circle_Y && data[2] == 2) {
     circle_Y -= delta;
   }
 
   noFill();
   strokeWeight(5);
   stroke(rco, gco, bco);
-  diam = data[4].toInt();
+  diam = data[4];
   ellipse(circle_X, circle_Y, 5*(diam+1), 5*(diam+1));
-  
-  if(data[5] == "3"){
+
+  if (data[5] == 3) {
     rco = int(random(0, 256));
     gco = int(random(0, 256));
     bco = int(random(0, 256));
@@ -91,11 +90,9 @@ void draw() {
 
 
   //クリック判定
-  if (data[5] == "1") {
-    if ((y-5*(diam+1) <= circle_Y and circle_Y <= y+50+5*(diam+1))
-     && (x-5*(diam+1) <= circle_X and circle_X <= x+50+5*(diam+1)){
+  if (data[5] == 1) {
+    if ((y-5*(diam+1) <= circle_Y && circle_Y <= y+50+5*(diam+1))&& (x-5*(diam+1) <= circle_X && circle_X <= x+50+5*(diam+1))) {
       pt+= 10-diam; //当たったので得点増加
-      click = 1;
       cnt = flamer - 1;
     }
   }
@@ -106,10 +103,8 @@ void draw() {
     background(204);
     x=random(0, height - 50);
     y=random(0, width - 50);
-    click = 0; //この座標でのクリック履歴クリア
     cnt = 0; //更新したのでカウンタクリア
   }
-
 
   //文字表示
   background(204);
@@ -120,8 +115,12 @@ void draw() {
 }
 
 void serialEvent(Serial myPort) {
-  if (myPort.available()>1) {
-    data = myPort.read();
-    Serial.write("0");
+  if (myPort.available()>5) {
+    for (int i = 0; i < 6; i++) {
+      data[i] = myPort.read();
+      println(data[i]);
+    }
+    myPort.write(3);
+    println();
   }
 }
