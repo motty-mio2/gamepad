@@ -24,6 +24,7 @@ int bco = 0;
 //カーソルの初期座標
 float circle_X = 320;
 float circle_Y = 320;
+int diam; //直径の係数
 
 void setup() {
   textSize(24);
@@ -41,6 +42,9 @@ void draw() {
     text("finish!!",width/2, height/2);
     text("your score is " + pt,width/2, height/2+30);
     text("if you wanna play again, click L1 button",width/2, height/2+60);
+    if(data[0]=="0"){
+      timer = 0
+    }
   else {
     timer += 1;
   }
@@ -61,24 +65,25 @@ void draw() {
     delta = 5;
   }
 
-  if (data[2] == "1"){
+  if (data[1] == "1"){
     circle_X += delta;
-  } else if (data[2] == "2"){
+  } else if (data[1] == "2"){
     circle_X -= delta;
   }
   
-  if (data[3] == "1"){
+  if (data[2] == "2"){
     circle_Y += delta;
-  } else if (data[3] == "2"){
+  } else if (data[2] == "1"){
     circle_Y -= delta;
   }
 
   noFill();
   strokeWeight(5);
   stroke(rco, gco, bco);
-  ellipse(circle_X, circle_Y, 5*(data[6]+1), 5*(data[6]+1));
+  diam = data[4].toInt();
+  ellipse(circle_X, circle_Y, 5*(diam+1), 5*(diam+1));
   
-  if(data[7] == "3"){
+  if(data[5] == "3"){
     rco = int(random(0, 256));
     gco = int(random(0, 256));
     bco = int(random(0, 256));
@@ -86,10 +91,10 @@ void draw() {
 
 
   //クリック判定
-  if (data[7] == "1") {
-    if ((y-5*(data[6]+1) <= circle_Y and circle_Y <= y+50+5*(data[6]+1))
-     && (x-5*(data[6]+1) <= circle_X and circle_X <= x+50+5*(data[6]+1)){
-      pt+= 10-data[6]; //当たったので得点増加
+  if (data[5] == "1") {
+    if ((y-5*(diam+1) <= circle_Y and circle_Y <= y+50+5*(diam+1))
+     && (x-5*(diam+1) <= circle_X and circle_X <= x+50+5*(diam+1)){
+      pt+= 10-diam; //当たったので得点増加
       click = 1;
       cnt = flamer - 1;
     }
