@@ -3,8 +3,8 @@
 #include <mio2_RoEn.h>
 
 #define DATASETS 6
-int datas[DATASETS] = {0};  // lbt,xjoy,yjoy,joyt,re,rbs
-int senD[DATASETS] = {0};
+int datas[DATASETS] = {0, 0, 0, 0, 0, 0};  // lbt,xjoy,yjoy,joyt,re,rbs
+int senD[DATASETS] = {0, 0, 0, 0, 0, 0};
 
 unsigned long circ;
 
@@ -87,10 +87,10 @@ void loop() {
   }
 
   if (datas[2] <= joydev[datas[0]][0]) {
-    L2.concat("A   ");
+    L2.concat("W   ");
     senD[3] = 2;
   } else if (datas[2] >= joydev[datas[0]][1]) {
-    L2.concat(" D  ");
+    L2.concat(" S  ");
     senD[3] = 1;
   } else {
     L2.concat("    ");
@@ -133,12 +133,14 @@ void loop() {
   lcd.setCursor(0, 1);
   lcd.print(L2);
 
-  if ((millis() > circ + 90) && Serial.available() > 0) {
-    circ = millis();
-
+  // if ((millis() > circ + 90) && Serial.available() > 0) {
+  if (Serial.available() > 0) {
+    // circ = millis();
     for (int i = 0; i < DATASETS; i++) {
-      Serial.write(senD[i]);
+      int goD = senD[i];
+      Serial.write(goD);
     }
     Serial.read();
   }
+  delay(10);
 }
