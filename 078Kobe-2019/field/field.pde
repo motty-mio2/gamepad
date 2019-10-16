@@ -35,7 +35,7 @@ void setup() {
   size(640, 640);
   background(255);
   frameRate(60);
-  myPort = new Serial(this, "COM14", 9600);
+  myPort = new Serial(this, "COM6", 9600);
   myPort.write(65);
 }
 
